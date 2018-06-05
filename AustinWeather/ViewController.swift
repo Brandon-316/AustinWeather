@@ -14,6 +14,8 @@ class ViewController: UIViewController {
             configureView()
         }
     }
+    
+    var imageString = ""
 
     @IBOutlet weak var weatherIcon: UIImageView?
     @IBOutlet weak var summaryLabel: UILabel?
@@ -24,10 +26,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var precipitationLabel: UILabel?
     @IBOutlet weak var humidityLabel: UILabel?
     
+    @IBOutlet weak var backgroundImage: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        backgroundImage.image = UIImage.init(named: imageString)
+        
         configureView()
         
     }
@@ -54,11 +60,20 @@ class ViewController: UIViewController {
         }
         
         // Configure nav bar back button
-        if let buttonFont = UIFont(name: "HelveticaNeue-Thin", size: 20.0) {
+//        if let buttonFont = UIFont(name: "HelveticaNeue-Thin", size: 20.0) {
+////            let barButtonAttributesDictionary: [String: AnyObject]? = [
 //            let barButtonAttributesDictionary: [String: AnyObject]? = [
-            let barButtonAttributesDictionary: [String: AnyObject]? = [
-                NSForegroundColorAttributeName: UIColor.white,
-                NSFontAttributeName: buttonFont
+//                NSAttributedStringKey.foregroundColor.rawValue: UIColor.white,
+//                NSAttributedStringKey.font.rawValue: buttonFont
+//            ]
+//            UIBarButtonItem.appearance().setTitleTextAttributes(barButtonAttributesDictionary, for: UIControlState())
+//        }
+        
+        if let buttonFont = UIFont(name: "HelveticaNeue-Thin", size: 20.0) {
+            //            let barButtonAttributesDictionary: [String: AnyObject]? = [
+            let barButtonAttributesDictionary: [NSAttributedStringKey: Any]? = [
+                NSAttributedStringKey(rawValue: NSAttributedStringKey.foregroundColor.rawValue): UIColor.white,
+                NSAttributedStringKey(rawValue: NSAttributedStringKey.font.rawValue): buttonFont
             ]
             UIBarButtonItem.appearance().setTitleTextAttributes(barButtonAttributesDictionary, for: UIControlState())
         }
@@ -67,9 +82,5 @@ class ViewController: UIViewController {
 //        weatherIcon?.image
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 }
 

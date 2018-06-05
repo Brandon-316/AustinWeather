@@ -17,7 +17,12 @@ struct CurrentWeather {
     var icon: UIImage? = UIImage(named: "default.png")
     
     init(weatherDictionary: [String: AnyObject]) {
-        temperature = weatherDictionary["temperature"] as? Int
+//        temperature = weatherDictionary["temperature"] as? Int
+        if let currentTemp = weatherDictionary["temperature"] as? NSNumber {
+            temperature = currentTemp.intValue
+        } else {
+            temperature = nil
+        }
         
         if let humidityFloat = weatherDictionary["humidity"] as? Double {
             humidity = Int(humidityFloat * 100)

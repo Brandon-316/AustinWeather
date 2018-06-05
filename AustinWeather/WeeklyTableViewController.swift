@@ -8,6 +8,17 @@
 import UIKit
 
 class WeeklyTableViewController: UITableViewController {
+    
+    var count = 0
+    
+    var images = [
+        "Austonian",
+        "BobMarley",
+        "DowntownKayak",
+        "Longhorn",
+        "PricklyPear",
+        "UTTower"
+    ]
 
     @IBOutlet weak var currentTemperatureLabel: UILabel?
     @IBOutlet weak var currentWeatherIcon: UIImageView?
@@ -26,23 +37,37 @@ class WeeklyTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        addBackgroundImage()
         
         retrieveWeatherForecast()
+        
+        images = images.shuffle
     }
+    
     
     func configureView() {
         // Set table view's background view property
         tableView.backgroundView = BackgroundView()
         
+        
         // Set custom height for table view row
         tableView.rowHeight = 64
         
         // Change the font and size of nav bar text
+//        if let navBarFont = UIFont(name: "HelveticaNeue-Thin", size: 20.0) {
+////            let navBarAttributesDictionary: [NSObject: AnyObject]? = [
+//            let navBarAttributesDictionary: [String: AnyObject]? = [
+//                NSAttributedStringKey.foregroundColor.rawValue: UIColor.white,
+//                NSAttributedStringKey.font.rawValue: navBarFont
+//            ]
+//            navigationController?.navigationBar.titleTextAttributes = navBarAttributesDictionary
+//        }
+        
         if let navBarFont = UIFont(name: "HelveticaNeue-Thin", size: 20.0) {
-//            let navBarAttributesDictionary: [NSObject: AnyObject]? = [
-            let navBarAttributesDictionary: [String: AnyObject]? = [
-                NSForegroundColorAttributeName: UIColor.white,
-                NSFontAttributeName: navBarFont
+            //            let navBarAttributesDictionary: [NSObject: AnyObject]? = [
+            let navBarAttributesDictionary: [NSAttributedStringKey: Any]? = [
+                NSAttributedStringKey(rawValue: NSAttributedStringKey.foregroundColor.rawValue): UIColor.white,
+                NSAttributedStringKey(rawValue: NSAttributedStringKey.font.rawValue): navBarFont
             ]
             navigationController?.navigationBar.titleTextAttributes = navBarAttributesDictionary
         }
@@ -50,6 +75,24 @@ class WeeklyTableViewController: UITableViewController {
         // Position refresh control above background view
         refreshControl?.layer.zPosition = tableView.backgroundView!.layer.zPosition + 1
         refreshControl?.tintColor = UIColor.white
+    }
+    
+    func addBackgroundImage() {
+        let background = tableView.backgroundView
+        
+        let image = UIImageView.init(image: UIImage.init(named: "Capitol"))
+        image.contentMode = .scaleAspectFill
+        
+        let visualEffect = UIVisualEffectView()
+        visualEffect.effect = UIBlurEffect(style: .dark)
+        visualEffect.contentMode = .scaleAspectFill
+        visualEffect.frame = CGRect.init(x: 0, y: 64, width: tableView.frame.width, height: tableView.frame.height - 64)
+        
+        visualEffect.alpha = 0.2
+        
+        image.frame = CGRect.init(x: 0, y: 0, width: tableView.frame.width, height: tableView.frame.height - 64)
+        visualEffect.contentView.addSubview(image)
+        background?.addSubview(visualEffect)
     }
 
     @IBAction func refreshWeather() {
@@ -66,6 +109,9 @@ class WeeklyTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDaily" {
+            let vc = segue.destination as! ViewController
+            let imageString = getImage()
+            vc.imageString = imageString
             if let indexPath = tableView.indexPathForSelectedRow {
                 let dailyWeather = weeklyWeather[indexPath.row]
                 (segue.destination as! ViewController).dailyWeather = dailyWeather
@@ -92,7 +138,6 @@ class WeeklyTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell") as! DailyWeatherTableViewCell
-        
         let dailyWeather = weeklyWeather[indexPath.row]
         if let maxTemp = dailyWeather.maxTemperature {
             cell.temperatureLabel.text = "\(maxTemp)º"
@@ -155,5 +200,16 @@ class WeeklyTableViewController: UITableViewController {
                 }
             }
         }
+    }
+    
+    func getImage() -> String {
+        let imageString = images[count]
+        
+        if count == images.count - 1 {
+            count = 0
+        } else {
+            count += 1
+        }
+        return imageString
     }
 }

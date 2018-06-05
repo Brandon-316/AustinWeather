@@ -22,9 +22,19 @@ struct DailyWeather {
     var day: String?
     let dateFormatter = DateFormatter()
     
-    init(dailyWeatherDict: [String: AnyObject]) {
-        maxTemperature = dailyWeatherDict["temperatureMax"] as? Int
-        minTemperature = dailyWeatherDict["temperatureMin"] as? Int
+    init(dailyWeatherDict: [String: Any]) {
+        
+        if let max = dailyWeatherDict["temperatureMax"] as? NSNumber {
+            maxTemperature = max.intValue
+        } else {
+            maxTemperature = nil
+        }
+        if let min = dailyWeatherDict["temperatureMin"] as? NSNumber {
+            minTemperature = min.intValue
+        } else {
+            minTemperature = nil
+        }
+        
         if let humidityFloat = dailyWeatherDict["humidity"] as? Double {
             humidity = Int(humidityFloat * 100)
         } else {
